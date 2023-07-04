@@ -6,9 +6,12 @@
 	<body>
 		<video id="videoElement" autoplay></video>
 		<button onclick="toggleCamera()">Cambiar Cámara</button>
+		<button onclick="takePhoto()">Tomar Foto</button>
+		<canvas id="canvasElement"></canvas>
 
 		<script>
 			var videoElement = document.getElementById('videoElement');
+			var canvasElement = document.getElementById('canvasElement');
 			var currentCamera = 'environment';
 
 			function toggleCamera() {
@@ -30,6 +33,32 @@
 					.catch(function (error) {
 						console.log('Se produjo un error al cambiar de cámara:', error);
 					});
+			}
+
+			function takePhoto() {
+				// Obtener el contexto 2D del lienzo
+				var context = canvasElement.getContext('2d');
+
+				// Establecer el ancho y alto del lienzo para que coincida con el video
+				canvasElement.width = videoElement.videoWidth;
+				canvasElement.height = videoElement.videoHeight;
+
+				// Dibujar la imagen del video en el lienzo
+				context.drawImage(
+					videoElement,
+					0,
+					0,
+					canvasElement.width,
+					canvasElement.height
+				);
+
+				// Crear un enlace para descargar la foto
+				var link = document.createElement('a');
+				link.href = canvasElement.toDataURL();
+				link.download = 'photo.png';
+
+				// Simular un clic en el enlace para descargar la foto
+				link.click();
 			}
 
 			// Verificar si el navegador admite la API de getUserMedia
