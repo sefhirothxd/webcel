@@ -5,17 +5,39 @@
 	</head>
 	<body>
 		<video id="videoElement" autoplay></video>
+		<button onclick="toggleCamera()">Cambiar Cámara</button>
 
 		<script>
+			var videoElement = document.getElementById('videoElement');
+			var currentCamera = 'environment';
+
+			function toggleCamera() {
+				currentCamera =
+					currentCamera === 'environment' ? 'user' : 'environment';
+
+				// Detener el stream de la cámara actual
+				videoElement.srcObject.getTracks().forEach(function (track) {
+					track.stop();
+				});
+
+				// Obtener acceso a la nueva cámara seleccionada
+				navigator.mediaDevices
+					.getUserMedia({ video: { facingMode: { exact: currentCamera } } })
+					.then(function (stream) {
+						// Asignar el nuevo stream de la cámara al elemento de video
+						videoElement.srcObject = stream;
+					})
+					.catch(function (error) {
+						console.log('Se produjo un error al cambiar de cámara:', error);
+					});
+			}
+
 			// Verificar si el navegador admite la API de getUserMedia
 			if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-				// Obtener acceso a la cámara
+				// Obtener acceso a la cámara inicial (cámara trasera)
 				navigator.mediaDevices
-					.getUserMedia({ video: true })
+					.getUserMedia({ video: { facingMode: { exact: currentCamera } } })
 					.then(function (stream) {
-						// Obtener la referencia al elemento de video en HTML
-						var videoElement = document.getElementById('videoElement');
-
 						// Asignar el stream de la cámara al elemento de video
 						videoElement.srcObject = stream;
 					})
