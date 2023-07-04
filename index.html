@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Visualización de cámara local</title>
+	</head>
+	<body>
+		<video id="videoElement" autoplay></video>
+
+		<script>
+			// Verificar si el navegador admite la API de getUserMedia
+			if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+				// Obtener acceso a la cámara
+				navigator.mediaDevices
+					.getUserMedia({ video: true })
+					.then(function (stream) {
+						// Obtener la referencia al elemento de video en HTML
+						var videoElement = document.getElementById('videoElement');
+
+						// Asignar el stream de la cámara al elemento de video
+						videoElement.srcObject = stream;
+					})
+					.catch(function (error) {
+						console.log('Se produjo un error al acceder a la cámara:', error);
+					});
+			} else {
+				console.log(
+					'La API de getUserMedia no está soportada en este navegador'
+				);
+			}
+		</script>
+	</body>
+</html>
